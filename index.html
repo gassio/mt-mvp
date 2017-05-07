@@ -22,6 +22,7 @@
                         margin: 10px 15px;
                         background: #eee;
                         border: 2px solid #555;
+                        cursor: pointer;
                     }
 
             .jw-controlbar {
@@ -74,7 +75,10 @@
         </style>
     </head>
     <body>
+        <h1>Click on the cards...</h1>
+        
         <div class="page" id="my-app">
+
             <div id="player">Loading the player...</div>
 
             <div class="cards">
@@ -96,7 +100,7 @@
                 },
                 methods: {
                     gotoCard1() {
-                        player.seek(50);
+                        player.seek(10);
                     },
 
                     gotoCard2() {
