@@ -45,8 +45,13 @@
             }
             
             .jw-dock {
-                margin-top: 250px;
+                margin-top: 35%;
+                margin-left: 10%;
             }
+
+                .jw-dock-button {
+                    font-size: 3.5em;
+                }
 
 
             .jw-nextup-container {
@@ -82,9 +87,9 @@
             <div id="player">Loading the player...</div>
 
             <div class="cards">
-                <div class="card" @click="gotoCard1()">card1</div>
-                <div class="card" @click="gotoCard2()">card2</div>
-                <div class="card" @click="gotoCard3()">card3</div>            
+                <div class="card" @click="gotoCard1()">0:10</div>
+                <div class="card" @click="gotoCard2()">1:00</div>
+                <div class="card" @click="gotoCard3()">1:10</div>            
             </div>
         </div>
 
@@ -96,60 +101,65 @@
             var app = new Vue({
                 el: '#my-app',
                 data: {
-                    test: '1'
+                    player: null
+                },
+                created: function() {
+                    this.player = jwplayer('player');
+                },
+                mounted: function () {                    
+                    this.player.setup({
+                        file: 'presentation.mp4',
+                        image: 'http://content.jwplatform.com/thumbs/xJ7Wcodt-720.jpg',
+                    });
+
+                    var that = this;
+
+                    this.player.on('ready', function() {
+                        that.player.addButton(
+                            "http://icons.jwplayer.com/icons/white/add.svg", 
+                            "Add annotation", 
+                            function() { that.showAnnoMenu() }, 
+                            "annomenu");
+                        })
                 },
                 methods: {
                     gotoCard1() {
-                        player.seek(10);
+                        this.player.seek(10);
                     },
 
                     gotoCard2() {
-                        player.seek(80);
+                        this.player.seek(60);
                     },
 
                     gotoCard3() {
-                        player.seek(90);
+                        this.player.seek(70);
+                    },
+
+                    showAnnoMenu() {
+                        $(document).ready(function() {
+                                    var annoMenu = `
+                                        <div class="annomenu">
+                                            <div class="annomenu-option">
+                                            1
+                                            </div>
+                                            <div class="annomenu-option">
+                                            2
+                                            </div>
+                                            <div class="annomenu-option">
+                                            3
+                                            </div>
+                                            <div class="annomenu-option">
+                                            4
+                                            </div>
+                                            <div class="annomenu-option">
+                                            5
+                                            </div>
+                                        </div>
+                                    `;
+                                    $('.jw-nextup-container').append(annoMenu)
+                                })
                     }
                 }                
-            })
-
-            var player = jwplayer('player');
-
-            player.setup({
-                file: 'presentation.mp4',
-                image: 'http://content.jwplatform.com/thumbs/xJ7Wcodt-720.jpg',
-             });
-
-            player.on('ready', function() {
-                player.addButton(
-                    "http://icons.jwplayer.com/icons/white/add.svg", 
-                    "Add annotation", 
-                    function() {
-                        $(document).ready(function() {
-                            var annoMenu = `
-                                    <div class="annomenu">
-                                        <div class="annomenu-option">
-                                        1
-                                        </div>
-                                        <div class="annomenu-option">
-                                        2
-                                        </div>
-                                        <div class="annomenu-option">
-                                        3
-                                        </div>
-                                        <div class="annomenu-option">
-                                        4
-                                        </div>
-                                        <div class="annomenu-option">
-                                        5
-                                        </div>
-                                    </div>
-                                `
-                            $('.jw-nextup-container').append(annoMenu)
-                            })
-                        },
-                        "annomenu"
-                    );
             })
         </script>
     </body>
