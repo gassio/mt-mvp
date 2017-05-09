@@ -87,32 +87,44 @@
             <div id="player">Loading the player...</div>
 
             <div class="cards">
-                <div class="card" @click="gotoCard1()">0:10</div>
-                <div class="card" @click="gotoCard2()">1:00</div>
-                <div class="card" @click="gotoCard3()">1:10</div>            
+                <div class="card" @click="gotoCard1()">0:{{goto1}}</div>
+                <div class="card" @click="gotoCard2()">0:{{goto2}}</div>
+                <div class="card" @click="gotoCard3()">0:{{goto3}}</div>            
             </div>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.2/vue.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
         <script>
 
             var app = new Vue({
                 el: '#my-app',
                 data: {
-                    player: null
+                    player: null,
+                    goto1: 10,
+                    goto2: 20,
+                    goto3: 30
                 },
                 created: function() {
                     this.player = jwplayer('player');
                 },
-                mounted: function () {                    
-                    this.player.setup({
-                        file: 'presentation.mp4',
-                        image: 'http://content.jwplatform.com/thumbs/xJ7Wcodt-720.jpg',
-                    });
-
+                mounted: function () {
                     var that = this;
+
+                    axios.get('https://cdn.jwplayer.com/v2/playlists/ccPaHVIt')
+                        .then(function (response)
+                        {
+                            console.log(response.data.playlist[0].image)
+                            that.player.setup({
+                                file: response.data.playlist[0].sources[4].file,
+                                image: 'response.data.playlist[0].image',
+                            });
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        })
 
                     this.player.on('ready', function() {
                         that.player.addButton(
@@ -124,15 +136,15 @@
                 },
                 methods: {
                     gotoCard1() {
-                        this.player.seek(10);
+                        this.player.seek(this.goto1);
                     },
 
                     gotoCard2() {
-                        this.player.seek(60);
+                        this.player.seek(this.goto2);
                     },
 
                     gotoCard3() {
-                        this.player.seek(70);
+                        this.player.seek(this.goto3);
                     },
 
                     showAnnoMenu() {
@@ -157,7 +169,7 @@
                                         </div>
                                     `;
                                     $('.jw-nextup-container').append(annoMenu)
-                                })
+                        })
                     }
                 }                
             })
