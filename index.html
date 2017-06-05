@@ -3,6 +3,9 @@
         <script src='https://content.jwplatform.com/libraries/L7fM8L0h.js'></script>
         <script>jwplayer.key='TYQ215lM';</script>
         <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
 
             .page {
                 display: flex;
@@ -76,21 +79,54 @@
                         justify-content: center;
                         align-items: center;
                     }
+            
+            .videos {
+                display: flex;
+            }
+                .video {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 10px;
+                    width: 25%;
+                }
+
+                .video-thumb {
+                   width: 100%;
+                }
 
         </style>
     </head>
     <body>
         <h1>Click on the cards...</h1>
-        
-        <div class="page" id="my-app">
 
-            <div id="player">Loading the player...</div>
+        <div id="my-app">
 
-            <div class="cards">
-                <div class="card" @click="gotoCard1()">0:{{goto1}}</div>
-                <div class="card" @click="gotoCard2()">0:{{goto2}}</div>
-                <div class="card" @click="gotoCard3()">0:{{goto3}}</div>            
+            <div class="page">
+
+                <div id="player">Loading the player...</div>
+
+                <div class="cards">
+                    <div class="card" @click="gotoCard1()">0:{{goto1}}</div>
+                    <div class="card" @click="gotoCard2()">0:{{goto2}}</div>
+                    <div class="card" @click="gotoCard3()">0:{{goto3}}</div>       
+                </div>
+
             </div>
+
+            <h1>{{playlistName}}</h1>
+
+            <div class="videos">
+                    <div class="video" v-for="vid in videos" >
+                        <a :href="vid.vidLink">
+                            <img class="video-thumb" :src="vid.vidThumb">
+                        </a>
+                        <span class="video-title">Title: {{ vid.vidTitle }}</span>
+                        <span class="video-duration">Duration: {{ vid.vidDuration }}</span>
+                        <span class="video-desc">Description: {{ vid.vidDesc }}</span>
+                        <span class="video-student">Student: {{ vid.vidStudent }}</span>
+                    </div>
+                </div> 
+
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -105,7 +141,9 @@
                     player: null,
                     goto1: 10,
                     goto2: 20,
-                    goto3: 30
+                    goto3: 30,
+                    playlistName: '',
+                    videos: []
                 },
                 created: function() {
                     this.player = jwplayer('player');
@@ -116,11 +154,19 @@
                     axios.get('https://cdn.jwplayer.com/v2/playlists/ccPaHVIt')
                         .then(function (response)
                         {
-                            console.log(response.data.playlist[0].image)
                             that.player.setup({
                                 file: response.data.playlist[0].sources[4].file,
-                                image: 'response.data.playlist[0].image',
+                                image: response.data.playlist[0].image,
                             });
+                            
+                            that.playlistName = response.data.title;
+
+                            var playlist = response.data.playlist
+
+                            for (var i=0; i < playlist.length; ++i) {
+                                var video = { vidTitle: playlist[i].title, vidLink: playlist[i].link, vidThumb: playlist[i].image, vidDuration: playlist[i].duration, vidDesc: playlist[i].description, vidStudent: playlist[i].student }
+                                that.videos.push(video)
+                            }
                         })
                         .catch(function (error) {
                             console.log(error)
